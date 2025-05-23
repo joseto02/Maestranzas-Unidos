@@ -6,37 +6,37 @@
 {% block content %}
     
     <div class="card">
-        <div class="card-header">
-            <a name="" id="" class="btn btn-success" href="{% url 'crear' %}" role="button">Agregar producto</a>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <a class="btn btn-success" href="{% url 'crear' %}" role="button">Agregar producto</a>
+
+            <!-- Buscador -->
+            <form method="get" class="d-flex" action="">
+                <input class="form-control me-2" type="search" name="q" placeholder="Buscar por nombre..." value="{{ request.GET.q }}">
+                <button class="btn btn-outline-primary" type="submit">Buscar</button>
+            </form>
         </div>
-        
         
         <div class="card-body">
             <h4 class="card-title">Productos</h4>
             
-            <div
-                class="table-responsive"
-            >
-                <table
-                    class="table table-primary"
-                >
+            <div class="table-responsive">
+                <table class="table table-primary">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Imagen</th>
-                            <th scope="col">Descripcion</th>
-                            <th scope="col">Categoria</th>
-                            <th scope="col">Stock</th>
-                            <th scope="col">Ubicacion</th>
-                            <th scope="col">Acciones</th>
-
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Imagen</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Ubicación</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for producto in productos %}
                         <tr>
-                            <td scope="row">{{ producto.id }}</td>
+                            <td>{{ producto.id }}</td>
                             <td>{{ producto.nombre }}</td>
                             <td>
                                 <img src="{{ producto.imagen.url }}" height="100">
@@ -45,33 +45,21 @@
                             <td>{{ producto.categoria }}</td>
                             <td>{{ producto.stock }}</td>
                             <td>{{ producto.ubicacion }}</td>
-                            <td> <a
-                                name=""
-                                id=""
-                                class="btn btn-info"
-                                href="{% url 'editar' producto.id %}"
-                                role="button"
-                                >Editar</a
-                            >
-                            | <a
-                                name=""
-                                id=""
-                                class="btn btn-danger"
-                                href="{% url 'eliminar' producto.id %}"
-                                role="button"
-                                >Borrar</a
-                            >
+                            <td>
+                                <a class="btn btn-info" href="{% url 'editar' producto.id %}">Editar</a>
+                                |
+                                <a class="btn btn-danger" href="{% url 'eliminar' producto.id %}">Borrar</a>
                             </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No se encontraron productos.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            
-
         </div>
-        
     </div>
-    
-    
+
 {% endblock %}

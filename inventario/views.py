@@ -31,3 +31,11 @@ def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
     producto.delete()
     return redirect('inventario')
+
+def listar_productos(request):
+    query = request.GET.get('q')
+    if query:
+        productos = Producto.objects.filter(nombre__icontains=query)
+    else:
+        productos = Producto.objects.all()
+    return render(request, 'productos/index.html', {'productos': productos})
