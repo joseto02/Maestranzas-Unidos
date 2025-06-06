@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Producto
+from .models import Producto, Movimiento
 from .forms import ProductoForm
 # Create your views here.
 
@@ -39,3 +39,86 @@ def listar_productos(request):
     else:
         productos = Producto.objects.all()
     return render(request, 'productos/index.html', {'productos': productos})
+
+def registrar_entrada(request):
+    if request.method == "POST":
+        componente_id = request.POST["componente_id"]
+        cantidad = int(request.POST["cantidad"])
+        origen = request.POST["origen"]
+
+        componente = Producto.objects.get(id=componente_id)
+        componente.stock += cantidad
+        componente.save()
+
+        Movimiento.objects.create(
+            componente=componente,
+            tipo="entrada",
+            cantidad=cantidad,
+            origen=origen,
+            responsable=request.user,
+        )
+
+        return redirect("inventario") 
+    else:
+        componentes = Producto.objects.all()
+        return render(
+            request, "productos/registrar_entrada.html", {"componentes": componentes}
+        )
+
+
+def registrar_salida(request):
+    if request.method == "POST":
+        componente_id = request.POST["componente_id"]
+        cantidad = int(request.POST["cantidad"])
+        destino = request.POST["destino"]
+
+        componente = Producto.objects.get(id=componente_id)
+
+        if cantidad > componente.stock:
+            return render(
+                request,
+                "productos/registrar_salida.html",
+                {
+                    "componentes": Producto.objects.all(),
+                    "error": "Stock insuficiente para realizar esta salida.",
+                },
+            )
+
+        componente.stock -= cantidad
+        componente.save()
+
+        Movimiento.objects.create(
+            componente=componente,
+            tipo="salida",
+            cantidad=cantidad,
+            destino=destino,
+            responsable=request.user,
+        )
+
+        return redirect("inventario")
+    else:
+        componentes = Producto.objects.all()
+        return render(
+            request, "productos/registrar_salida.html", {"componentes": componentes}
+        )
+
+
+def historial_movimientos(request, componente_id):
+    componente = Producto.objects.get(id=componente_id)
+
+    movimientos = Movimiento.objects.filter(componente=componente)
+
+    # Filtro por fecha
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    if fecha_inicio:
+        movimientos = movimientos.filter(fecha__gte=fecha_inicio)
+    if fecha_fin:
+        movimientos = movimientos.filter(fecha__lte=fecha_fin)
+
+    return render(
+        request,
+        "productos/historial.html",
+        {"componente": componente, "movimientos": movimientos},
+    )

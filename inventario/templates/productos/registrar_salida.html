@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Registrar Salida</h2>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="componente_id" class="form-label">Componente</label>
+            <select class="form-select" name="componente_id" required>
+                <option value="">Seleccione un componente</option>
+                {% for componente in componentes %}
+                <option value="{{ componente.id }}">{{ componente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad</label>
+            <input type="number" class="form-control" name="cantidad" min="1" required>
+        </div>
+        <div class="mb-3">
+            <label for="destino" class="form-label">Destino</label>
+            <input type="text" class="form-control" name="destino" required>
+        </div>
+        <button type="submit" class="btn btn-danger">Registrar Salida</button>
+        <a href="{% url 'inventario' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
