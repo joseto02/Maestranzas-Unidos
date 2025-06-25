@@ -28,6 +28,7 @@
                             <th>Imagen</th>
                             <!-- <th>Descripción</th> -->
                             <th>Categoría</th>
+                            <th>Nivel mínimo</th>
                             <th>Stock</th>
                             <th>Ubicación</th>
                             <th>Acciones</th>
@@ -43,7 +44,11 @@
                             </td>
                             <!-- <td>{{ producto.descripcion }}</td> -->
                             <td>{{ producto.categoria }}</td>
-                            <td>{{ producto.stock }}</td>
+                            <td>{{ producto.nivel_minimo }}</td>
+                            <td {% if producto.stock < producto.nivel_minimo %}class="text-danger fw-bold"{% endif %}>
+                                {{ producto.stock }}
+                            </td>
+
                             <td>{{ producto.ubicacion }}</td>
                             <td>
                                 <a class="btn btn-info" href="{% url 'editar' producto.id %}">Editar</a>

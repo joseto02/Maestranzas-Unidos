@@ -1,0 +1,37 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Historial General{% endblock %}
+{% block content %}
+<h2>Historial General de Movimientos</h2>
+
+<form method="get" class="mb-3">
+    <input type="text" name="componente" placeholder="Buscar por nombre..." value="{{ request.GET.componente }}" class="form-control w-25 d-inline">
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>N Serie</th>
+            <th>Componente</th>
+            <th>Origen</th>
+            <th>Responsable</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mov in movimientos %}
+        <tr>
+            <td>{{ mov.fecha|date:"Y-m-d H:i" }}</td>
+            <td>{{ mov.tipo }}</td>
+            <td>{{ mov.componente.n_serie }}</td>
+            <td>{{ mov.componente.nombre }}</td>
+            <td>{{ mov.origen|default:"—" }}</td>
+            <td>{{ mov.responsable|default:"Sistema" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center">No hay movimientos registrados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

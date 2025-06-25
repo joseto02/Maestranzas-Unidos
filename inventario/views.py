@@ -11,26 +11,59 @@ def inventario(request):
     return render(request, 'productos/index.html', {'productos': productos})
 
 def crear_producto(request):
-    
     formulario = ProductoForm(request.POST or None, request.FILES or None)
     if formulario.is_valid():
-        formulario.save()
+        producto = formulario.save()
+
+        # Registrar movimiento de creación
+        Movimiento.objects.create(
+            componente=producto,
+            tipo="creación",
+            cantidad=0,
+            origen="Nuevo producto",
+            responsable=request.user if request.user.is_authenticated else None,
+        )
+
         return redirect('inventario')
-    
+
     return render(request, 'productos/crear.html', {'formulario': formulario})
+
 
 def editar_producto(request, id):
     producto = Producto.objects.get(id=id)
     formulario = ProductoForm(request.POST or None, request.FILES or None, instance=producto)
     if formulario.is_valid() and request.POST:
         formulario.save()
+
+        # Registrar movimiento de edición
+        Movimiento.objects.create(
+            componente=producto,
+            tipo="edición",
+            cantidad=0,
+            origen="Modificación manual",
+            responsable=request.user if request.user.is_authenticated else None,
+        )
+
         return redirect('inventario')
+    
     return render(request, 'productos/editar.html', {'formulario': formulario, 'producto': producto})
+
 
 def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
+
+    # Registrar movimiento antes de borrar
+    Movimiento.objects.create(
+        componente=producto,
+        tipo="eliminación",
+        cantidad=0,
+        origen=f"Producto eliminado: {producto.nombre}",
+        responsable=request.user if request.user.is_authenticated else None,
+    )
+
     producto.delete()
     return redirect('inventario')
+
 
 def listar_productos(request):
     query = request.GET.get('q')
@@ -122,3 +155,14 @@ def historial_movimientos(request, componente_id):
         "productos/historial.html",
         {"componente": componente, "movimientos": movimientos},
     )
+
+#--------------------------------------------------------------------------
+
+def historial_general(request):
+    movimientos = Movimiento.objects.all().order_by('-fecha')
+
+    componente = request.GET.get('componente')
+    if componente:
+        movimientos = movimientos.filter(componente__nombre__icontains=componente)
+
+    return render(request, 'productos/historial_general.html', {'movimientos': movimientos})

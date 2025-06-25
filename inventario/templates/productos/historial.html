@@ -1,23 +1,10 @@
-{% extends 'inventario/base.html' %}
-{% load static %}
-
-{% block title %} Historial producto {% endblock %}
-
-{% block content %}
-<form method="get" class="mb-3">
-    <label>Desde: <input type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}"></label>
-    <label>Hasta: <input type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}"></label>
-    <button type="submit" class="btn btn-secondary">Filtrar</button>
-</form>
-
 <table class="table">
     <thead>
         <tr>
             <th>Tipo</th>
-            <th>Cantidad</th>
             <th>Fecha</th>
             <th>Origen</th>
-            <th>Destino</th>
+            <th>N Serie</th>
             <th>Responsable</th>
         </tr>
     </thead>
@@ -25,17 +12,13 @@
         {% for mov in movimientos %}
         <tr>
             <td>{{ mov.tipo }}</td>
-            <td>{{ mov.cantidad }}</td>
             <td>{{ mov.fecha|date:"Y-m-d H:i" }}</td>
             <td>{{ mov.origen }}</td>
-            <td>{{ mov.destino }}</td>
+            <td>{{ mov.componente.n_serie }}</td>
             <td>{{ mov.responsable }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="6">No hay movimientos para este componente.</td></tr>
+        <tr><td colspan="5">No hay movimientos para este componente.</td></tr>
         {% endfor %}
     </tbody>
 </table>
-
-<a href="{% url 'inventario' %}" class="btn btn-primary">Volver al detalle</a>
-{% endblock %}

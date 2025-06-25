@@ -13,5 +13,7 @@ urlpatterns = [
     path("entrada/", views.registrar_entrada, name="registrar_entrada"),
     path("salida/", views.registrar_salida, name="registrar_salida"),
     path("historial/<int:componente_id>/", views.historial_movimientos, name="historial_movimientos"),
+    path('historial/', views.historial_general, name='historial_general'),
+
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
