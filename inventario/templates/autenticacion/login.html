@@ -1,0 +1,64 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+
+{% block title %} Login {% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/registro.css' %}"> 
+{% endblock %}
+
+{% block content %}
+
+<!-- <div class="column is-half">
+    <h1 class="is-size-3 mt-3">Inicio de sesión</h1>
+    <p class="is-size-5"></p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            {{field.label_tag}} {{field}}
+
+        {% endfor %}
+
+        {% if error %}
+        <div class="notification is-danger mt-3 text-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+        
+        <input type="submit" value="Iniciar sesion" class="button is-primary mt-3">
+        <input type="hidden" name="next" value="{{ next }}" />
+
+        <p>Si no tienes una cuenta Registrate aqui <a href="{% url 'registro' %}">Registro</a>
+        </p>
+    </form>
+</div> -->
+
+<form class="form" method="post" novalidate>
+    <p class="title">Inicio de sesión</p>
+    <p class="message">Bienvenido de nuevo, por favor inicia sesión.</p>
+
+    {% csrf_token %}
+
+    {% for field in form %}
+    <label>
+        {{ field }}
+        <span>{{ field.label }}</span>
+        {% if field.errors %}
+        <p class="help is-danger">{{ field.errors }}</p>
+        {% endif %}
+    </label>
+    {% endfor %}
+
+    {% if error %}
+    <div class="notification is-danger mt-2">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <button type="submit" class="submit">Iniciar sesión</button>
+    <p class="signin">¿No tienes una cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a></p>
+</form>
+
+{% endblock %}

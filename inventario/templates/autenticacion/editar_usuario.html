@@ -1,0 +1,35 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+
+{% block title %} Editar {% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/registro.css' %}">
+{% endblock %}
+
+{% block content %}
+<form class="form" method="post" novalidate>
+    <p class="title">Editar cuenta</p>
+    <p class="message">Modifica tu nombre de usuario o cambia tu contraseña.</p>
+
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="notification is-danger">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    {% for field in form %}
+    <label>
+        {{ field }}
+        <span>{{ field.label }}</span>
+        {% if field.errors %}
+        <p class="help is-danger">{{ field.errors }}</p>
+        {% endif %}
+    </label>
+    {% endfor %}
+
+    <button type="submit" class="submit">Guardar cambios</button>
+</form>
+{% endblock %}

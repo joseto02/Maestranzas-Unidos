@@ -1,0 +1,65 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+
+{% block title %} Registro {% endblock %}
+
+{% block styles %} <link rel="stylesheet" href="{% static 'css/registro.css' %}"> {% endblock %}
+
+{% block content %}
+<form class="form" method="post" novalidate>
+    <p class="title">Registro Maestranzas unidos</p>
+
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="notification is-danger">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <div class="flex">
+        <label>
+            {{ form.username }}
+            <span>{{ form.username.label }}</span>
+            {% if form.username.errors %}
+            <p class="help is-danger">{{ form.username.errors }}</p>
+            {% endif %}
+        </label>
+        <label>
+            {{ form.first_name }}
+            <span>{{ form.first_name.label }}</span>
+            {% if form.first_name.errors %}
+            <p class="help is-danger">{{ form.first_name.errors }}</p>
+            {% endif %}
+        </label>
+    </div>
+
+    <label>
+        {{ form.email }}
+        <span>{{ form.email.label }}</span>
+        {% if form.email.errors %}
+        <p class="help is-danger">{{ form.email.errors }}</p>
+        {% endif %}
+    </label>
+
+    <label>
+        {{ form.password1 }}
+        <span>{{ form.password1.label }}</span>
+        {% if form.password1.errors %}
+        <p class="help is-danger">{{ form.password1.errors }}</p>
+        {% endif %}
+    </label>
+
+    <label>
+        {{ form.password2 }}
+        <span>{{ form.password2.label }}</span>
+        {% if form.password2.errors %}
+        <p class="help is-danger">{{ form.password2.errors }}</p>
+        {% endif %}
+    </label>
+
+    <button type="submit" class="submit">Crear cuenta</button>
+    <p class="signin">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+</form>
+
+{% endblock %}
