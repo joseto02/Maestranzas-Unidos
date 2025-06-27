@@ -3,9 +3,18 @@
 {% block content %}
 <h2>Historial General de Movimientos</h2>
 
-<form method="get" class="mb-3">
-    <input type="text" name="componente" placeholder="Buscar por nombre..." value="{{ request.GET.componente }}" class="form-control w-25 d-inline">
-    <button type="submit" class="btn btn-primary">Buscar</button>
+<form method="get" class="mb-3 d-flex align-items-end gap-3 flex-wrap">
+    <div>
+        <label for="fecha_inicio" class="form-label">Desde:</label>
+        <input type="date" id="fecha_inicio" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}" class="form-control">
+    </div>
+    <div>
+        <label for="fecha_fin" class="form-label">Hasta:</label>
+        <input type="date" id="fecha_fin" name="fecha_fin" value="{{ request.GET.fecha_fin }}" class="form-control">
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
 </form>
 
 <table class="table table-striped">
@@ -15,6 +24,7 @@
             <th>Tipo</th>
             <th>N Serie</th>
             <th>Componente</th>
+            <th>Cantidad</th>
             <th>Origen</th>
             <th>Responsable</th>
         </tr>
@@ -24,8 +34,9 @@
         <tr>
             <td>{{ mov.fecha|date:"Y-m-d H:i" }}</td>
             <td>{{ mov.tipo }}</td>
-            <td>{{ mov.componente.n_serie }}</td>
-            <td>{{ mov.componente.nombre }}</td>
+            <td>{% if mov.componente %}{{ mov.componente.n_serie }}{% else %}—{% endif %}</td>
+            <td>{% if mov.componente %}{{ mov.componente.nombre }}{% else %}Producto Eliminado{% endif %}</td>
+            <td>{{ mov.cantidad }}</td>
             <td>{{ mov.origen|default:"—" }}</td>
             <td>{{ mov.responsable|default:"Sistema" }}</td>
         </tr>

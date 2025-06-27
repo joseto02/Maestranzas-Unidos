@@ -1,0 +1,45 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Reporte de Stock{% endblock %}
+{% block content %}
+
+<h2>Reporte de Stock Actual</h2>
+
+<form method="get" class="mb-3">
+    <label class="me-2">Ordenar por:</label>
+    <select name="orden" class="form-select w-auto d-inline" onchange="this.form.submit()">
+        <option value="nombre" {% if orden_actual == 'nombre' %}selected{% endif %}>Nombre</option>
+        <option value="categoria" {% if orden_actual == 'categoria' %}selected{% endif %}>Categoría</option>
+        <option value="ubicacion" {% if orden_actual == 'ubicacion' %}selected{% endif %}>Ubicación</option>
+        <option value="stock" {% if orden_actual == 'stock' %}selected{% endif %}>Stock (ascendente)</option>
+        <option value="-stock" {% if orden_actual == '-stock' %}selected{% endif %}>Stock (descendente)</option>
+    </select>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Ubicación</th>
+            <th>Nivel mínimo</th>
+            <th>Stock actual</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>{{ producto.ubicacion }}</td>
+            <td>{{ producto.nivel_minimo }}</td>
+            <td {% if producto.stock < producto.nivel_minimo %}class="text-danger fw-bold"{% endif %}>
+                {{ producto.stock }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay productos registrados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

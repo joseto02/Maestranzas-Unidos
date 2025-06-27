@@ -1,0 +1,26 @@
+{% extends "inventario/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Registrar salida a proyecto para: <strong>{{ componente.nombre }}</strong></h2>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad a retirar</label>
+            <input type="number" class="form-control" name="cantidad" min="1" required>
+        </div>
+        <div class="mb-3">
+                <label for="destino" class="form-label">Destino (Proyecto)</label>
+                <input type="text" class="form-control" name="destino" required>
+        </div>
+        <button type="submit" class="btn btn-warning">Registrar salida</button>
+        <a href="{% url 'inventario' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

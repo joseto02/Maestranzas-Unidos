@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 
 
@@ -12,9 +13,9 @@ class Producto(models.Model):
     descripcion = models.TextField()
     fabricante = models.CharField(max_length=100, default='')
     modelo = models.CharField(max_length=100, default='')
-    n_serie = models.IntegerField(default=0)
-    stock = models.IntegerField()
-    nivel_minimo = models.PositiveIntegerField(default=0)
+    n_serie = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    nivel_minimo = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
     categoria = models.CharField(max_length=100, default='')
     ubicacion = models.CharField(max_length=100, default='')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -38,7 +39,7 @@ class Movimiento(models.Model):
     ('eliminación', 'Eliminación'),
     ]
     
-    componente = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    componente = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True)
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
     cantidad = models.PositiveIntegerField()
     fecha = models.DateTimeField(auto_now_add=True)
@@ -49,3 +50,4 @@ class Movimiento(models.Model):
     
     def __str__(self):
         return f"{self.tipo.upper()} - {self.componente.nombre} ({self.cantidad})"
+    

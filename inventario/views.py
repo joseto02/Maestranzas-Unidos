@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from .models import Producto, Movimiento
 from .forms import ProductoForm, LoginForm, UserRegistroForm, UserUpdateForm
+from datetime import datetime
 # Create your views here.
 
 def inicio(request):
@@ -142,7 +143,7 @@ def historial_movimientos(request, componente_id):
 
     movimientos = Movimiento.objects.filter(componente=componente)
 
-    # Filtro por fecha
+   
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
@@ -162,11 +163,18 @@ def historial_movimientos(request, componente_id):
 def historial_general(request):
     movimientos = Movimiento.objects.all().order_by('-fecha')
 
-    componente = request.GET.get('componente')
-    if componente:
-        movimientos = movimientos.filter(componente__nombre__icontains=componente)
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+
+    if fecha_inicio:
+        movimientos = movimientos.filter(fecha__date__gte=fecha_inicio)
+
+    if fecha_fin:
+        movimientos = movimientos.filter(fecha__date__lte=fecha_fin)
 
     return render(request, 'productos/historial_general.html', {'movimientos': movimientos})
+
+
 
 def user_login(request):
     if request.method == "POST":
@@ -182,9 +190,13 @@ def user_login(request):
                     return render(request, 'autenticacion/login.html', {'form': form, 'error': 'Cuenta inactiva.'})
             else:
                 return render(request, 'autenticacion/login.html', {'form': form, 'error': 'Usuario o contraseña incorrectos.'})
+        else:
+            
+            return render(request, 'autenticacion/login.html', {'form': form, 'error': 'Por favor completa todos los campos correctamente.'})
     else:
         form = LoginForm()
         return render(request, "autenticacion/login.html", {"form": form})
+
 
 @login_required
 def logout_view(request):
@@ -216,7 +228,7 @@ def editar_usuario(request):
                 user.set_password(password)
                 update_session_auth_hash(
                     request, user
-                )  # Mantiene sesión activa tras cambiar contraseña
+                ) 
 
             user.save()
             return redirect("inventario")
@@ -224,3 +236,78 @@ def editar_usuario(request):
         form = UserUpdateForm(instance=request.user)
 
     return render(request, "autenticacion/editar_usuario.html", {"form": form})
+
+def registrar_salida_proyecto(request, componente_id):
+    componente = Producto.objects.get(id=componente_id)
+
+    if request.method == "POST":
+        cantidad = int(request.POST["cantidad"])
+        destino = request.POST["destino"]
+
+        if cantidad > componente.stock:
+            return render(request, "productos/registrar_salida_proyecto.html", {
+                "componente": componente,
+                "error": f"No hay suficiente stock o el resultado baja del nivel mínimo ({componente.nivel_minimo})"
+            })
+
+        componente.stock -= cantidad
+        componente.save()
+
+        Movimiento.objects.create(
+            componente=componente,
+            tipo="salida",
+            cantidad=cantidad,
+            destino=destino,
+            responsable=request.user
+        )
+
+        return redirect("inventario")
+
+    return render(request, "productos/registrar_salida_proyecto.html", {
+        "componente": componente,
+    })
+
+def registrar_entrada(request, componente_id):
+    componente = get_object_or_404(Producto, id=componente_id)
+
+    if request.method == "POST":
+        try:
+            cantidad = int(request.POST.get("cantidad"))
+        except (TypeError, ValueError):
+            cantidad = 0
+
+        razon = request.POST.get("razon", "").strip()
+
+        if cantidad <= 0:
+            error = "La cantidad debe ser un número positivo."
+            return render(request, "productos/registrar_entrada.html", {
+                "componente": componente,
+                "error": error
+            })
+
+        componente.stock += cantidad
+        componente.save()
+
+        Movimiento.objects.create(
+            componente=componente,
+            tipo="entrada",
+            cantidad=cantidad,
+            origen=razon,
+            responsable=request.user
+        )
+
+        return redirect("inventario")
+
+    return render(request, "productos/registrar_entrada.html", {
+        "componente": componente
+    })
+
+def reporte_stock(request):
+    orden = request.GET.get('orden', 'nombre')
+
+    productos = Producto.objects.all().order_by(orden)
+
+    return render(request, 'productos/reporte_stock.html', {
+        'productos': productos,
+        'orden_actual': orden,
+    })

@@ -54,10 +54,18 @@
                                 <a class="btn btn-info" href="{% url 'editar' producto.id %}">Editar</a>
                                 |
                                 <a class="btn btn-danger" href="{% url 'eliminar' producto.id %}">Borrar</a>
+
+                                <a class="btn btn-success" href="{% url 'registrar_entrada' producto.id %}">Entrada</a>
                                 |
+                                <a class="btn btn-warning" href="{% url 'salida_proyecto' producto.id %}">Salida</a>
+                                
                                 <button class="btn btn-secondary btn-ver" data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}"
+                                    data-fabricante="{{ producto.fabricante }}"
+                                    data-modelo="{{ producto.modelo }}"
+                                    data-n_serie="{{ producto.n_serie }}"
                                     data-imagen="{{ producto.imagen.url }}" data-descripcion="{{ producto.descripcion }}"
                                     data-categoria="{{ producto.categoria }}" data-stock="{{ producto.stock }}"
+                                    data-nivel_minimo="{{ producto.nivel_minimo }}"
                                     data-ubicacion="{{ producto.ubicacion }}" data-creacion="{{ producto.fecha_creacion }}"
                                     data-actualizacion="{{ producto.fecha_actualizacion }}">
                                     Ver
@@ -85,9 +93,13 @@
                 <div class="modal-body">
                     <img id="modal-imagen" src="" alt="Imagen del producto" class="img-fluid mb-2">
                     <p><strong>Nombre:</strong> <span id="modal-nombre"></span></p>
+                    <p><strong>Fabricante:</strong> <span id="modal-fabricante"></span></p>
+                    <p><strong>Modelo:</strong> <span id="modal-modelo"></span></p>
+                    <p><strong>N° de serie:</strong> <span id="modal-n_serie"></span></p>
                     <p><strong>Descripción:</strong> <span id="modal-descripcion"></span></p>
                     <p><strong>Categoría:</strong> <span id="modal-categoria"></span></p>
                     <p><strong>Stock:</strong> <span id="modal-stock"></span></p>
+                    <p><strong>Stock mínimo:</strong> <span id="modal-nivel_minimo"></span></p>
                     <p><strong>Ubicación:</strong> <span id="modal-ubicacion"></span></p>
                     <p><strong>Producto agregado:</strong> <span id="modal-creacion"></span></p>
                     <p><strong>Última actualización:</strong> <span id="modal-actualizacion"></span></p>

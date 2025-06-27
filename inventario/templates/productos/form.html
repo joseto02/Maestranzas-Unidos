@@ -17,6 +17,7 @@
         aria-describedby="helpId" 
         placeholder="{{campo.label}}" 
         value="{{campo.value | default:''}}"
+        {% if campo.field.widget.input_type == "number" %} min="0" {% endif %}
         />
     </div>
     <div class="col-12 help-text"> {{campo.errors}} </div>

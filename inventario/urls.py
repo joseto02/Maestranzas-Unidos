@@ -18,6 +18,12 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("registro/", views.user_register, name="registro"),
     path("editar-usuario/", views.editar_usuario, name="editar_usuario"),
+    path('salida-proyecto/<int:componente_id>/', views.registrar_salida_proyecto, name='salida_proyecto'),
+    path('registrar-entrada/<int:componente_id>/', views.registrar_entrada, name='registrar_entrada'),
+    path('reporte-stock/', views.reporte_stock, name='reporte_stock'),
+
+
+
 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
