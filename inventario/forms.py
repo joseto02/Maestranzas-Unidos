@@ -1,6 +1,7 @@
 from django import forms
 from .models import Producto
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 class ProductoForm(forms.ModelForm):
     class Meta:
@@ -69,4 +70,50 @@ class UserUpdateForm(forms.ModelForm):
         if password1 or password2:
             if password1 != password2:
                 raise forms.ValidationError("Las contraseñas no coinciden.")
+        return cleaned_data
+    
+class UserUpdateForm(forms.ModelForm):
+    password_actual = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'input'}),
+        label='Contraseña actual',
+        required=True
+    )
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'input'}),
+        label='Nueva Contraseña',
+        required=False
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'input'}),
+        label='Confirmar Nueva Contraseña',
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['username']
+        labels = {
+            "username": "Nombre de usuario",
+        }
+        widgets = {
+            "username": forms.TextInput(attrs={"class": "input"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.get('instance')
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password_actual = cleaned_data.get("password_actual")
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+
+        if not self.user.check_password(password_actual):
+            raise forms.ValidationError("La contraseña actual es incorrecta.")
+
+        if password1 or password2:
+            if password1 != password2:
+                raise forms.ValidationError("Las nuevas contraseñas no coinciden.")
+
         return cleaned_data
