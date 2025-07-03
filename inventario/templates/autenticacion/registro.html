@@ -57,6 +57,11 @@
         <p class="help is-danger">{{ form.password2.errors }}</p>
         {% endif %}
     </label>
+    
+    <label>
+        {{ form.is_staff }}
+        <span>{{ form.is_staff.label }}</span>
+    </label>
 
     <button type="submit" class="submit">Crear cuenta</button>
     <p class="signin">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>

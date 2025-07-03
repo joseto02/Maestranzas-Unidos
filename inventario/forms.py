@@ -25,16 +25,20 @@ class LoginForm(forms.Form):
     password = forms.CharField(label="Contraseña", widget=forms.PasswordInput(attrs={'class': 'input'}))
 
 class UserRegistroForm(forms.ModelForm):
+
+    is_staff = forms.BooleanField(label="¿Es administrador?", required=False)
+
     password1 = forms.CharField( widget=forms.PasswordInput(attrs={'class': 'input'}), label='Contraseña')
     password2 = forms.CharField( widget=forms.PasswordInput(attrs={'class': 'input'}), label='Confirmar Contraseña')
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'email']
+        fields = ['username', 'first_name', 'email', 'is_staff']
         labels = {
             'username': 'Nombre de usuario',
             'first_name': 'Nombre',
-            'email': 'Correo Electrónico'
+            'email': 'Correo Electrónico',
+            'is_staff': '¿Es administrador?',
         }
         widgets = {
             "username": forms.TextInput(attrs={"class": "input"}),
@@ -71,7 +75,7 @@ class UserUpdateForm(forms.ModelForm):
             if password1 != password2:
                 raise forms.ValidationError("Las contraseñas no coinciden.")
         return cleaned_data
-    
+
 class UserUpdateForm(forms.ModelForm):
     password_actual = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'input'}),

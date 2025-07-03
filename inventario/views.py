@@ -174,7 +174,8 @@ def historial_general(request):
 
     return render(request, 'productos/historial_general.html', {'movimientos': movimientos})
 
-
+def es_admin(user):
+    return user.is_authenticated and user.is_staff
 
 def user_login(request):
     if request.method == "POST":
@@ -209,6 +210,7 @@ def user_register(request):
         if user_form.is_valid():
             new_user = user_form.save(commit=False)
             new_user.set_password(user_form.cleaned_data['password1'])
+            new_user.is_staff = user_form.cleaned_data.get("is_staff", False)
             new_user.save()
             return redirect('login')
     else:
